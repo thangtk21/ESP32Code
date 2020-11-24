@@ -1,16 +1,23 @@
-#include <Preferences.h>
-Preferences prf;
-
+#include "SPIFFS.h"
 void setup()
 {
   Serial.begin(115200);
-  prf.begin("DEVN",false);
-  uint16_t counter = prf.getUInt("cnt",0);
-  counter++;
-  Serial.printf("Current counter value: %d\n",counter);
-  prf.putUInt("cnt",counter);
-  prf.end();
+  SPIFFS.begin(true);
+  File file = SPIFFS.open("/data.txt");
+  if(!file)
+  {
+    Serial.println("can not open file");
+    return;
+  }
+
+  Serial.println("File content");
+  while(file.available())
+  {
+    Serial.write(file.read());
+  }
+  file.close();
 }
+
 void loop()
 {
   
